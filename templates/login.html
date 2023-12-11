@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+{% block content %}
+{%if errorMsg%}
+<div class="notification is-danger">
+    <button class="delete"></button>
+    {{errorMsg}}
+</div>
+{%endif%}
+<div class="hero is-halfheight">
+    <div class="hero-body is-justify-content-center is-align-items-center">
+        <form action="/" method="POST">
+        <div class="columns is-flex is-flex-direction-column box">
+            <div class="column">
+                <label for="email">Email</label>
+                <input class="input is-primary" type="text" placeholder="Email address" name="email">
+            </div>
+            <div class="column">
+                <label for="Name">Password</label>
+                <input class="input is-primary" type="password" placeholder="Password" name="password">
+                <a href="forget.html" class="is-size-7 has-text-primary">forget password?</a>
+            </div>
+            <div class="column">
+                <button class="button is-primary is-fullwidth" type="submit">Login</button>
+            </div>
+            <div class="has-text-centered">
+                <p class="is-size-7"> Don't have an account? <a href="#" class="has-text-primary">Sign up</a>
+                </p>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

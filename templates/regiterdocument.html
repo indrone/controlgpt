@@ -1,0 +1,97 @@
+{% extends "index.html" %}
+{% block content %}
+
+{%if isSuccess%}
+<div class="hero is-halfheight">
+  <div class="hero-body is-justify-content-center is-align-items-center">
+      <div class="columns is-flex-direction-column box">
+        <div class="columns">
+          <div class="column">
+            <input class="input is-primary" type="text" placeholder="Usecase Name" name="usecasename" id="usecasename">
+          </div>
+          <div class="column">
+            <input class="input is-primary" type="text" placeholder="Usecase Name" name="filename" value="{{filename}}" id="filename" disabled>
+
+          </div>
+        </div>
+
+          <div class="columns">
+            <div class="column">
+              
+              <div class="select">
+                <select id="input_column">
+                  <option>Select Input Column   </option>
+                  {%for c in columns%}
+                  <option>{{c}}</option>
+                  {%endfor%}
+                </select>
+              </div>
+          </div>
+          <div class="column">
+              
+              <div class="select">
+                <select id="output_column">
+                  <option>Select Output Column</option>
+                  {%for c in columns%}
+                  <option>{{c}}</option>
+                  {%endfor%}
+                </select>
+              </div>
+          </div>
+          </div>
+          
+          <div class="column">
+              <button class="button is-primary is-fullwidth" type="submit">Save</button>
+          </div>
+          
+      </div>
+      
+  </div>
+</div>
+{%else%}
+<div class="hero is-halfheight">
+    <div class="hero-body is-justify-content-center is-align-items-center">
+        <form action="/regiterdocument/" method="POST" enctype="multipart/form-data">
+        <div class="columns is-flex is-flex-direction-column box">
+            <div class="column">
+                <div class="file has-name is-boxed">
+                    <label class="file-label">
+                      <input class="file-input" type="file" name="file" accept=".xlsx">
+                      <span class="file-cta">
+                        <span class="file-icon">
+                            <img width="24" height="24" src="https://img.icons8.com/external-tanah-basah-basic-outline-tanah-basah/24/external-upload-folder-tanah-basah-basic-outline-tanah-basah.png" alt="external-upload-folder-tanah-basah-basic-outline-tanah-basah"/>
+                        </span>
+                        <span class="file-label">
+                          Choose a file…
+                        </span>
+                      </span>
+                      <span class="file-name">
+                        Screen Shot 2017-07-29 at 15.54.25.png
+                      </span>
+                    </label>
+                  </div>
+            </div>
+            <!--
+            <div class="column">
+                <label for="Name">Password</label>
+                <input class="input is-primary" type="password" placeholder="Password" name="password">
+                <a href="forget.html" class="is-size-7 has-text-primary">forget password?</a>
+            </div>
+            -->
+            <div class="column">
+                <button class="button is-primary is-fullwidth" type="submit">Upload</button>
+            </div>
+            
+        </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+  function save(){
+
+  }
+</script>
+{%endif%}
+{% endblock %}
