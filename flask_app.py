@@ -6,7 +6,17 @@ import pandas as pd
 app=flask.Flask(__name__)
 app.secret_key="ControlBuddy"
 
-UserID_DB={"indreshb":"password"}
+UserID_DB={"indreshb":"password",
+           "admin":"admin",
+           "jeremys": "password",
+           "peterd":"password",
+           "dilettad":"password",
+           "rachelw": "password",
+           "varung":"password",
+           "rajaneeshk":"password"
+           }
+
+
 
 @app.route("/",methods=["GET","POST"])
 def login():
@@ -35,11 +45,54 @@ def login():
 def application():
     if flask.request.method=="POST":
         control=flask.request.form["requirement"]
-        output=model.predict(control)
-        output=output.split("·\xa0\xa0\xa0")
-        output=[o for o in output if o.strip()!=""]
-        return flask.render_template("application.html",requirement=control, output=output) 
-    return flask.render_template("application.html")
+        delivery=flask.request.form["Delivery"]
+        type_of=flask.request.form["Type"]
+        priority=flask.request.form["Priority"]
+        MileStone=flask.request.form["MileStone"]
+        print(delivery,type_of,priority,MileStone)
+        #output=model.predict(control)
+        control_list=control.split("-")
+        list_of_outputs=[]
+        ll=['Section_Folders','Title_test case name or scenario','STEPS (Descrption of the step)','EXPECTED RESULTS','Delivery Team',	'Delivery Subteam',	'Thread','Type','PRIORITY','RICEFW','Milestone','Reference','Test Case Owner',	'Tcode'	,'TEMPLATE HEADERS']
+        for idx,c in enumerate(control_list):
+            if c!="":
+                print("***********",c)
+                steps,outcomes=model.response(c)
+                
+                _steps=steps.split("#")
+                _outcomes=outcomes.split("#")
+                print("STEPS",_steps)
+                print("EXPECTED",_outcomes)
+                for s,o in zip(_steps,_outcomes):
+                    if s=="" and o=="":
+                        continue
+                    _temp={
+                        "idx": f"REQ_ID_{idx}",
+                        'Section_Folders':"",
+                        'Title_test case name or scenario':c,
+                        "STEPS (Descrption of the step)":s,
+                        "EXPECTED RESULTS":o,
+                        'Delivery Team':delivery,
+                        'Delivery Subteam':"",
+                        'Thread':"",
+                        'Type':type_of,
+                        'PRIORITY':priority,
+                        'RICEFW':"",
+                        'Milestone':MileStone,
+                        'Reference':"",
+                        'Test Case Owner':"",	
+                        'Tcode':""	,
+                        'TEMPLATE HEADERS':""
+
+                    }
+                    list_of_outputs.append(_temp)
+        df=pd.DataFrame(list_of_outputs)
+        #df.columns=["Jira Id","Business Requirement","Test Steps","Expected Outcomes (should match 1:1 for each test step)"]
+
+
+        df.to_csv("static/Output.csv",index=False)
+        return flask.render_template("applicationv2.html",requirement=control, output=list_of_outputs) 
+    return flask.render_template("applicationv2.html")
 
 @app.route("/regiterdocument/",methods=["GET","POST"])
 def regiterdocument():
@@ -61,8 +114,13 @@ def loggout():
     flask.session["UserLogged"]=False
     return flask.redirect(flask.url_for("login"))
 
+@app.route("/downloadExcel/")
+def excel():
+    return flask.send_from_directory("static","Output.csv")
+
 if __name__=="__main__":
-    embeddings=lang_chain_llm.Embedding().load_embedding()
+    #embeddings=lang_chain_llm.Embedding().load_embedding()
+    embeddings=None
     llm_gpt_4=lang_chain_llm.ModelFactory("AzureChatOpenAI",{"temperature":0}).load_model()
-    model=lang_chain_llm.ModelLLMPersitantStorage(embeddings,llm_gpt_4)
-    app.run(debug=True)
+    model=lang_chain_llm.ModelLLMTechnical(embeddings,llm_gpt_4)
+    app.run(host='0.0.0.0',port=8000,debug=False)

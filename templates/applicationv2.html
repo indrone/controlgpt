@@ -1,0 +1,124 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="columns">
+    <div class="column">
+        <form action="/application/" method="POST">
+          <div class="field is-horizontal">
+            <div class="field-body">
+              <div class="field">
+                <label class="label">Requirements</label>
+                <textarea class="textarea" placeholder="10 lines of textarea" rows="10" name="requirement">{{requirement}}</textarea>
+              </div>
+              <div class="field is-vertical">
+                <div class="field">
+                  <p class="control is-expanded">
+                    <label class="label">Delivery Team</label>
+                      <div class="select">
+                        <select name="Delivery">
+                          <option>Select dropdown</option>
+                          <option>Revenue</option>
+                          <option>IT</option>
+                          <option>Accounting</option>
+                        </select>
+                      </div>
+                    
+                  </p>
+                </div>
+                <div class="field">
+                  <p class="control is-expanded">
+                    <label class="label">Type</label>
+                      <div class="select">
+                        <select name="Type">
+                          <option>Select dropdown</option>
+                          <option>Testing</option> 
+                          <option>E2E Testing</option> 
+                          <option>Performance Testing</option> 
+                          <option>Data Migration Testing</option> 
+                          <option>Other</option> 
+                        </select>
+                      </div>
+                    
+                  </p>
+                </div>
+                <div class="field">
+                  <p class="control is-expanded">
+                    <label class="label">Priority</label>
+                      <div class="select">
+                        
+                          <select name="Priority">
+                            <option>Select dropdown</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Low</option>
+                            
+                          </select>
+                      </div>
+                    
+                  </p>
+                </div>
+                <div class="field">
+                  <p class="control is-expanded">
+                    <label class="label">MileStone</label>
+                    <input class="input" type="text" placeholder="e.g. alexsmith@gmail.com" name="MileStone">
+                    
+                  </p>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          <div class="buttons">
+                
+            <button class="button is-success" type="submit" style="color: black;"><img width="20" height="20" src="https://img.icons8.com/ios/50/sent--v1.png" alt="sent--v1" /> Submit</button>
+            <button class="button is-warning"><img width="20" height="20" src="https://img.icons8.com/pulsar-line/48/filled-trash.png" alt="filled-trash"/> Clear</button>
+            
+        </div>
+        </form>
+    </div>
+    
+</div>
+<div>
+    <div class="columns">
+        <div class="column">
+
+        </div>
+        <div class="column is-2">
+            <a class="button is-success" style="color: black;" href="/downloadExcel/"><img width="20" height="20" src="https://img.icons8.com/windows/32/download--v1.png" alt="download--v1"/>Download</a>
+
+        </div>
+    </div>
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th>Jira ID</th>
+            <th>Business Requirements</th>
+            <th>Test Steps</th>
+            <th>Expected Results</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+            {%for i in output%}
+          <tr>
+            <td>
+                {{i['idx']}}
+            </td>
+            <td>
+                {{i['Title_test case name or scenario']}}
+            </td>
+            <td>
+                {{i["STEPS (Descrption of the step)"]}}
+            </td>
+            <td>
+                {{i["EXPECTED RESULTS"]}}
+            </td>
+            
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+</div>
+
+
+
+{% endblock %}
