@@ -51,14 +51,33 @@ def application():
         MileStone=flask.request.form["MileStone"]
         print(delivery,type_of,priority,MileStone)
         #output=model.predict(control)
+        #llm_gpt_4=lang_chain_llm.ModelFactory("AzureChatOpenAI",{"temperature":0.5}).load_model()
+        #model=lang_chain_llm.ModelLLMTechnical(llm_gpt_4)
         control_list=control.split("-")
         list_of_outputs=[]
         ll=['Section_Folders','Title_test case name or scenario','STEPS (Descrption of the step)','EXPECTED RESULTS','Delivery Team',	'Delivery Subteam',	'Thread','Type','PRIORITY','RICEFW','Milestone','Reference','Test Case Owner',	'Tcode'	,'TEMPLATE HEADERS']
         for idx,c in enumerate(control_list):
             if c!="":
-                print("***********",c)
-                steps,outcomes=model.response(c)
-                
+                #print("***********",c)
+                prompt="Write the Test cases and expected Results for "
+
+                #prompt="You are an AI assistant for Manual Testing and to generate the unit test cases and execpeted resutls. "
+
+                if str(delivery)!="Select dropdown":
+                    prompt= prompt + " Delivery Team : " +str(delivery) + ", "
+
+                if str(type_of)!="Select dropdown":
+                    prompt= prompt + " Testing Type : " + str(type_of) + ", "
+
+                if str(MileStone)!="":
+                    prompt= prompt +  " Milestone : " + str(MileStone) + ", "
+
+                if str(c)!="":
+                    prompt= prompt +  " for the following requirement : " + str(c)
+                print(prompt)
+                steps,outcomes=model.response(prompt)
+                #steps,outcomes=model.response(c)
+                #c=prompt
                 _steps=steps.split("#")
                 _outcomes=outcomes.split("#")
                 print("STEPS",_steps)
@@ -94,6 +113,65 @@ def application():
         return flask.render_template("applicationv2.html",requirement=control, output=list_of_outputs) 
     return flask.render_template("applicationv2.html")
 
+
+
+# @app.route("/application/",methods=["GET","POST"])
+# def application():
+#     if flask.request.method=="POST":
+#         control=flask.request.form["requirement"]
+#         delivery=flask.request.form["Delivery"]
+#         type_of=flask.request.form["Type"]
+#         priority=flask.request.form["Priority"]
+#         MileStone=flask.request.form["MileStone"]
+#         print(delivery,type_of,priority,MileStone)
+#         #output=model.predict(control)
+#         llm_gpt_4=lang_chain_llm.ModelFactory("AzureChatOpenAI",{"temperature":0.5}).load_model()
+#         model=lang_chain_llm.ModelLLMTechnical(llm_gpt_4)
+#         print(model)
+#         control_list=control.split("-")
+#         list_of_outputs=[]
+#         for idx,c in enumerate(control_list):
+#             if c!="":
+#                 print("***********",c)
+#                 prompt="You are an AI assistant for Manual Testing and to generate the unit test cases and execpeted resutls. " + "Testing Type :" + str(" E2E Testing ")+c 
+#                 steps,outcomes=model.response(prompt)
+                
+#                 _steps=steps.split("#")
+#                 _outcomes=outcomes.split("#")
+#                 #print("STEPS",_steps)
+#                 #print("EXPECTED",_outcomes)
+#                 for s,o in zip(_steps,_outcomes):
+#                     if s=="" and o=="":
+#                         continue
+#                     _temp={
+#                         "idx": f"REQ_ID_{idx}",
+#                         "control":c,
+#                         "test_steps":s,
+#                         "expected":o
+#                     }
+#                     list_of_outputs.append(_temp)
+#         df=pd.DataFrame(list_of_outputs)
+#         df.columns=["Jira Id","Business Requirement","Test Steps","Expected Outcomes (should match 1:1 for each test step)"]
+#         df.to_csv("static/Output.csv",index=False)
+#         return flask.render_template("applicationv1.html",requirement=control, output=list_of_outputs) 
+#     return flask.render_template("applicationv1.html")
+
+# @app.route("/regiterdocument/",methods=["GET","POST"])
+# def regiterdocument():
+#     if flask.request.method=="POST":
+#         f = flask.request.files['file'] 
+#         path=os.path.join("static",f.filename)
+#         f.save(path) 
+#         df=pd.read_excel(path)
+#         columns=list(df.columns)
+#         return flask.render_template("regiterdocument.html",
+#                                      isSuccess=True,
+#                                      columns=columns,
+#                                      filename=f.filename
+#                                      )
+#     return flask.render_template("regiterdocument.html")
+
+
 @app.route("/regiterdocument/",methods=["GET","POST"])
 def regiterdocument():
     if flask.request.method=="POST":
@@ -121,6 +199,6 @@ def excel():
 if __name__=="__main__":
     #embeddings=lang_chain_llm.Embedding().load_embedding()
     embeddings=None
-    llm_gpt_4=lang_chain_llm.ModelFactory("AzureChatOpenAI",{"temperature":0}).load_model()
+    llm_gpt_4=lang_chain_llm.ModelFactory("AzureChatOpenAI",{"temperature":0.5}).load_model()
     model=lang_chain_llm.ModelLLMTechnical(embeddings,llm_gpt_4)
     app.run(host='0.0.0.0',port=8000,debug=False)
